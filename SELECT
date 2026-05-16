@@ -17,8 +17,18 @@ WHERE artist_name NOT LIKE '% %';
 
 SELECT track_name
 FROM tracks
-WHERE LOWER(track_name) LIKE '%мой%'
-   OR LOWER(track_name) LIKE '%my%';
+WHERE track_name ILIKE 'мой %'
+   OR track_name ILIKE '% мой'
+   OR track_name ILIKE '% мой %'
+   OR track_name ILIKE 'мой'
+   OR track_name ILIKE 'my %'
+   OR track_name ILIKE '% my'
+   OR track_name ILIKE '% my %'
+   OR track_name ILIKE 'my';
+
+SELECT track_name
+FROM tracks
+WHERE string_to_array(lower(track_name), ' ') && ARRAY['мой', 'my'];
 
 -- Задание 3
 SELECT g.genre_name,
@@ -61,11 +71,11 @@ WHERE ar.artist_name = 'Dabro'
 ORDER BY c.compilation_name;
 
 -- Задание 4
-SELECT a.album_name
+SELECT DISTINCT a.album_name
 FROM albums a
 JOIN artist_albums aa ON a.album_id = aa.album_id
 JOIN artist_genres ag ON aa.artist_id = ag.artist_id
-GROUP BY a.album_id, a.album_name
+GROUP BY a.album_id, a.album_name, aa.artist_id
 HAVING COUNT(DISTINCT ag.genre_id) > 1
 ORDER BY a.album_name;
 
